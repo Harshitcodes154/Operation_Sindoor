@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ee24a0908439e448b1ba9c7639b8c37, type: 3}
+  m_Name: VisualAssetLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::Sindoor.VisualAssetLibrary
+  kestrel: {fileID: 4990078821234130646, guid: 7fa7b99309954de4998dbbb884c82506, type: 3}
+  adversary: {fileID: 5216010448324704388, guid: ee286e3f7590db94cbf73e48a99314fa, type: 3}
+  pilot: {fileID: 2641621432883377497, guid: e3b70366d7602994d910d29ecc0a196c, type: 3}
+  officer: {fileID: 5344909066186177983, guid: f4a88cfb38729a94e93bd53873a30919, type: 3}
+  cockpit: {fileID: 946722132570147209, guid: 64882efcfe077b54a95e2376d90925d0, type: 3}
+  missile: {fileID: 4529485493341485613, guid: bad9f0c4f19e0114e993af41ccf2a007, type: 3}
+  truck: {fileID: 8319163648429946546, guid: 7b9f6937ab3e3784eb66620ddd692177, type: 3}
+  hangar: {fileID: 4547055973372731197, guid: ab86d0378bd015e4b83b441bfd6a7e5b, type: 3}
+  tree: {fileID: 7580874762747265371, guid: 7a3ea51a43cef5c4b9daaaf3ff4fcec7, type: 3}
+  rock: {fileID: 5649836123632936421, guid: f28ce2ecbc31d3d489c621e4287b39ce, type: 3}
+  controlTower: {fileID: 5549594076642666836, guid: 6b7cb422b6aa21d4b81229495049f948, type: 3}
+  barracks: {fileID: 8376080192611461939, guid: cd49b4bbd4822ea4e9bc5552e6f85867, type: 3}
+  building: {fileID: 3984892828896033590, guid: 2673fd5f4a99f25479393df30636bfd7, type: 3}
+  relay: {fileID: 7860311320893573428, guid: 671fc457ee065fd4e9df5698b545fff2, type: 3}
+  airframe: {fileID: 2100000, guid: 56084f7401ba59147b6c28638a87ebd8, type: 2}
+  enemyPaint: {fileID: 2100000, guid: 78b182de9da716c4a85314b91318c93a, type: 2}
+  alloy: {fileID: 2100000, guid: 0ec14dd165ebd614b9fa22b5ec49f731, type: 2}
+  rubber: {fileID: 2100000, guid: 6441b47155069644db160b0877689397, type: 2}
+  canopy: {fileID: 2100000, guid: e50210d41cba61f4fb2294bffeac43ca, type: 2}
+  fabric: {fileID: 2100000, guid: a8fd3adfc9dece84c8bdc21c8f2d0de2, type: 2}
+  concrete: {fileID: 2100000, guid: 25fdfd999c7ada3489275b0ec1c09df6, type: 2}
+  asphalt: {fileID: 2100000, guid: 69af98c822dd1124f997436721403833, type: 2}
+  cladding: {fileID: 2100000, guid: f45fb60bf6028234b909ef09ef89edfe, type: 2}
+  soil: {fileID: 2100000, guid: 27c2a5b668ef1c941a6b84121626bec1, type: 2}
+  foliage: {fileID: 2100000, guid: 68c7ac2afeda7b046973f3df536336d8, type: 2}
+  smoke: {fileID: 2800000, guid: 837d7dcedcd693d4fbc8baf9795708c5, type: 3}
