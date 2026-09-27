@@ -61,3 +61,7 @@ Read [development report](Documentation/DEVELOPMENT_REPORT.md), [development not
 THIS GAME IS A FICTIONALIZED INTERPRETATION INSPIRED BY PUBLICLY REPORTED EVENTS. CHARACTERS, LOCATIONS, MISSIONS, DIALOGUE AND GAMEPLAY SCENARIOS HAVE BEEN FICTIONALIZED FOR ENTERTAINMENT.
 
 No real operational routes, coordinates, targets, weapon parameters, personnel identities or casualty names are represented.
+
+## Project note
+
+**lets start the project ....**
