@@ -20,8 +20,11 @@ namespace Sindoor {
                     var finRoot=new GameObject("Canted stabilizer "+side).transform;finRoot.SetParent(group,false);finRoot.localPosition=new Vector3(side*.85f,.65f,-5.1f);fin.Attach(finRoot,"Rudder",paint);
                     b[a.alloy].Tube(new Vector3(side*.69f,-.1f,-6.9f),new Vector3(side*.69f,-.1f,-8.2f),.6f,.48f,radial,false);
                     b[a.rubber].Tube(new Vector3(side*.69f,-.1f,-8.17f),new Vector3(side*.69f,-.1f,-7.55f),.44f,.39f,radial,true);
-                    b[paint].Box(new Vector3(side*1.1f,-.38f,1.15f),new Vector3(.77f,.95f,2.6f),Quaternion.Euler(0,side*8,side*8));
-                    b[a.rubber].Box(new Vector3(side*1.1f,-.38f,2.48f),new Vector3(.64f,.73f,.03f),Quaternion.Euler(0,side*8,side*8));
+                    // Tapered inlet shoulders and recessed throat replace the solid rectangular pods.
+                    var inlet=new GameObject("Intake "+side).transform;inlet.SetParent(group,false);inlet.localPosition=new Vector3(side*1.04f,-.34f,0);
+                    var intake=new VisualBatch();intake[paint].Loft(new[]{-.9f,.5f,1.9f,2.5f},new[]{.2f,.37f,.4f,.37f},new[]{.24f,.45f,.44f,.39f},new[]{0f,0f,0f,0f},level==0?24:12,3);
+                    intake[a.rubber].Ellipsoid(new Vector3(0,0,2.35f),new Vector3(.32f,.345f,.025f),level==0?24:12,8);
+                    intake.Attach(inlet,"Inlet lip and throat");
                     if(level<2){
                         for(int p=0;p<12;p++){
                             float angle=p*Mathf.PI*2/12;Vector3 outward=new Vector3(Mathf.Cos(angle),Mathf.Sin(angle),0);
@@ -57,19 +60,22 @@ namespace Sindoor {
                 b.Attach(group,"Airframe");lods.Add(new LOD(level==0?.14f:level==1?.045f:.003f,group.GetComponentsInChildren<Renderer>()));
             }
             var lod=visual.gameObject.AddComponent<LODGroup>();lod.SetLODs(lods.ToArray());lod.RecalculateBounds();
-            var gear=new GameObject("Landing gear").transform;gear.SetParent(visual,false);var gb=new VisualBatch();
+            var gear=new GameObject("Landing gear").transform;gear.SetParent(visual,false);
             for(int i=0;i<3;i++){
                 float x=i==0?0:i==1?-1.45f:1.45f,z=i==0?5.05f:-2.3f;
-                gb[a.alloy].Tube(new Vector3(x,-.65f,z),new Vector3(x,-2.4f,z),.067f,.075f,16);gb[a.alloy].Tube(new Vector3(x,-1.1f,z-.65f),new Vector3(x,-2.17f,z),.04f,.04f,12);
-                gb[a.rubber].Tube(new Vector3(x-.18f,-2.5f,z),new Vector3(x+.18f,-2.5f,z),i==0?.36f:.43f,i==0?.36f:.43f,32);
-                gb[a.alloy].Tube(new Vector3(x-.19f,-2.5f,z),new Vector3(x+.19f,-2.5f,z),.2f,.2f,20);
-                gb[a.airframe].Box(new Vector3(x+.23f,-1.25f,z),new Vector3(.025f,.8f,1.05f),Quaternion.Euler(0,0,12));
+                var strut=new GameObject(i==0?"Nose strut":i==1?"Main strut L":"Main strut R").transform;strut.SetParent(gear,false);strut.localPosition=new Vector3(x,-.65f,z);var gb=new VisualBatch();
+                gb[a.alloy].Tube(Vector3.zero,new Vector3(0,-1.75f,0),.067f,.075f,16);gb[a.alloy].Tube(new Vector3(0,-.45f,-.65f),new Vector3(0,-1.52f,0),.04f,.04f,12);
+                gb[hostile?a.enemyPaint:a.airframe].Box(new Vector3(.23f,-.6f,0),new Vector3(.025f,.8f,1.05f),Quaternion.Euler(0,0,12));gb.Attach(strut,"Suspension and door");
+                var wheel=new GameObject("Wheel").transform;wheel.SetParent(strut,false);wheel.localPosition=new Vector3(0,i==0?-1.92f:-1.85f,0);var wb=new VisualBatch();float radius=i==0?.36f:.43f;
+                wb[a.rubber].Tube(new Vector3(-.18f,0,0),new Vector3(.18f,0,0),radius,radius,32);
+                wb[a.alloy].Tube(new Vector3(-.19f,0,0),new Vector3(.19f,0,0),.2f,.2f,20);
+                foreach(int side in new[]{-1,1})for(int bolt=0;bolt<6;bolt++){float theta=bolt*Mathf.PI/3;wb[a.rubber].Ellipsoid(new Vector3(side*.195f,Mathf.Sin(theta)*.13f,Mathf.Cos(theta)*.13f),Vector3.one*.027f,8,6);}
+                wb.Attach(wheel,"Wheel and hub");
             }
-            gb.Attach(gear,"Gear");
             // Keep the existing cinematic entry path clear and give the climb visible support.
             var ladder=new GameObject("Boarding ladder").transform;ladder.SetParent(root,false);var stepsMesh=new VisualBatch();
-            foreach(float x in new[]{-1.98f,-1.22f})stepsMesh[a.alloy].Tube(new Vector3(x,-1.45f,2.72f),new Vector3(x,1.35f,2.72f),.027f,.027f,10);
-            for(int rung=0;rung<9;rung++)stepsMesh[a.alloy].Tube(new Vector3(-1.98f,-1.4f+rung*.31f,2.72f),new Vector3(-1.22f,-1.4f+rung*.31f,2.72f),.028f,.028f,10);
+            foreach(float x in new[]{-1.98f,-1.22f})stepsMesh[a.alloy].Tube(new Vector3(x,-1.45f,3.3f),new Vector3(x,1.35f,3.3f),.027f,.027f,10);
+            for(int rung=0;rung<9;rung++)stepsMesh[a.alloy].Tube(new Vector3(-1.98f,-1.4f+rung*.31f,3.3f),new Vector3(-1.22f,-1.4f+rung*.31f,3.3f),.028f,.028f,10);
             stepsMesh.Attach(ladder,"Boarding steps");ladder.gameObject.SetActive(false);
             var attachments=new GameObject("Attachments").transform;attachments.SetParent(root,false);
             Anchor(attachments,"CockpitCamera",new Vector3(0,1.5f,4.5f));Anchor(attachments,"CannonMuzzle",new Vector3(0,-.5f,9));Anchor(attachments,"MissileLaunch",new Vector3(0,-1,8));

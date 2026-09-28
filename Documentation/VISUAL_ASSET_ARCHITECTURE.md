@@ -24,7 +24,9 @@ These match existing gameplay offsets. Flight and weapon hits still use the orig
 
 ## Character contract
 
-Preserve direct-child joints named Leg L, Leg R, Arm L and Arm R, +Z orientation and approximately 1.9 m stature. Existing walking, salute, preparation, entry and briefing direction animates these joints. Added meshes include gloves, mask hose, visor, uniform details and elbow children. This is a modular rigid-joint procedural rig, not a skinned production character or motion-capture set.
+Preserve direct-child joints named Leg L, Leg R, Arm L and Arm R, +Z orientation and approximately 1.9 m stature. Legs now have Knee/Ankle children with 0.42 m thigh and shin segments; arms retain Elbow children. CharacterPresentation runs after the unchanged cinematic director. It reads root displacement and shot state to blend a planted-foot walking cycle, knee/ankle placement, opposed arm swing, salute/release and ladder-climbing poses. It never changes the root path, shot timing or gameplay state. Pause freezes the displayed pose. Smoothing uses exponential time-based blends; teleports are excluded from walking speed. The suit uses continuous tapered profiles instead of disconnected oval limb sections. This remains a modular rigid-joint rig rather than a skinned or motion-captured character.
+
+Aircraft landing gear now contains Nose strut, Main strut L and Main strut R, each with a Wheel child. Presentation rotates the strut hinges with eased extension/retraction, smooths surface compression and spins wheels from measured ground displacement. Neither the existing flight controller nor the collision model depends on these joints. The airframe loft uses shape-preserving interpolation and welded UV-seam normals; tapered recessed intakes replace the box pods.
 
 ## Materials and lighting
 
@@ -46,5 +48,7 @@ URP Lit handles opaque materials. Custom canopy shading uses Fresnel and probe r
 
 Tools/CheckGameplayPreservation.ps1 compares protected methods with the local pre-pass baseline in Artifacts/AssetUpgradeBaseline. Keep that directory to rerun this comparison. Tools/Build.ps1 opens editor scenes and checks assets and save recovery. Tools/Playtest.ps1 -ShowWindow runs all five missions with rendered evidence. Tools/ReviewAssets.ps1 loads all twelve scene gateways, captures assets and lighting, and samples normal-speed transit.
 
-This is an integrated original procedural asset upgrade, **not a completed photorealistic AAA art production**. Humans, foliage, terrain silhouette and some props remain visibly procedural; animations are simple; radio is subtitled and audio synthesized. The model boundary supports professionally authored licensed replacements without rewriting gameplay. Automated success establishes tested paths, not subjective final art quality or every possible player action.
+The editor also verifies forward-kinematic foot placement over 201 gait samples, blend equivalence at 30/144 Hz and required articulated joints. Asset review samples actual walking/standing/saluting transitions and captures walking, salute and climbing poses in addition to the previous model/lighting views.
+
+This is an integrated original procedural asset upgrade, **not a completed photorealistic AAA art production**. Humans, foliage, terrain silhouette and some props remain visibly procedural; animation is procedural; radio is subtitled and audio synthesized. The model boundary supports professionally authored licensed replacements without rewriting gameplay. Automated success establishes tested paths, not subjective final art quality or every possible player action.
 

@@ -8,6 +8,8 @@ The in-place asset pass adds a Resources-based visual catalog and fourteen gener
 
 ASSET_LICENSES.md inventories all content. Geometry, material maps and audio are original procedural work. Two project-specific generated bitmaps supply title key art and rocky terrain albedo. No imported third-party stock models or recordings were used.
 
+The subsequent animation/model refinement adds articulated knees and ankles, time-based walk/salute/climb blending, tapered suit profiles, hinged landing gear with rolling wheels, a smoother airframe loft and recessed intakes. Curved mesh UV seams share normals. Apron joints and aircraft rivets are less pronounced, rock/tree silhouettes are irregular, and sky fill exposes previously dark model detail. Existing camera paths, mission timing and gameplay methods remain intact. Additional validation checks foot placement, frame-rate-independent blending and rendered animation transitions.
+
 ## Preservation
 
 Tools/CheckGameplayPreservation.ps1 compares protected gameplay methods and full HUD/UI/cinematic files against the local pre-pass baseline. It also checks the mission/settings/save/input portion of GameData. Visual integration changes are limited to asset factories, missile/effect construction, exterior effect visibility, audio presentation, and opt-in test startup.

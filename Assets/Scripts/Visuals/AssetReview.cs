@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace Sindoor {
     // Opt-in player QA. Isolated save, unmodified gameplay paths, no production camera changes.
     public sealed class AssetReview : MonoBehaviour {
-        OperationGame g;string folder;int errors;readonly List<string> report=new List<string>();
+        OperationGame g;string folder;int errors;bool motionPassed=true;readonly List<string> report=new List<string>();
         readonly List<string> captures=new List<string>();DateTime started;
         IEnumerator Start(){
             g=OperationGame.Instance;folder=Path.Combine(g.evidencePath,"AssetReview");Directory.CreateDirectory(folder);started=DateTime.UtcNow;
@@ -30,7 +30,8 @@ namespace Sindoor {
             var raven=VisualAssetLibrary.InstantiateVisual(VisualAssetLibrary.Current.adversary,g.transform,"QA opposing aircraft");raven.position=p;g.ship.gameObject.SetActive(false);
             Look(p+new Vector3(-18,8,22),p+Vector3.up*.6f,48);yield return Capture("03-raven.png");Destroy(raven.gameObject);g.ship.gameObject.SetActive(true);
             g.pilot.gameObject.SetActive(true);g.pilot.position=p+new Vector3(-5,-2,5);g.pilot.rotation=Quaternion.identity;
-            Look(g.pilot.position+new Vector3(-1.5f,1.5f,3.8f),g.pilot.position+Vector3.up*1.15f,40);yield return Capture("04-pilot.png");g.pilot.gameObject.SetActive(false);
+            Look(g.pilot.position+new Vector3(-1.5f,1.5f,3.8f),g.pilot.position+Vector3.up*1.05f,40);yield return Capture("04-pilot.png");
+            yield return ReviewMotion();g.pilot.gameObject.SetActive(false);
             Look(new Vector3(10,90,-5270),new Vector3(200,15,-4740),57);yield return Capture("05-airbase.png");
             Look(new Vector3(-140,7,-5085),new Vector3(40,10,-4800),56);yield return Capture("06-service-area.png");
             Look(new Vector3(-800,1100,-1500),new Vector3(1500,400,3700),62);yield return Capture("07-terrain.png");
@@ -53,8 +54,27 @@ namespace Sindoor {
             }
             bool fresh=captures.TrueForAll(pth=>File.Exists(pth)&&File.GetLastWriteTimeUtc(pth)>=started&&new FileInfo(pth).Length>5000);
             report.Add((fresh?"PASS":"FAIL")+": "+captures.Count+" fresh rendered asset captures");report.Add("Runtime errors: "+errors);
-            report.Add(errors==0&&fresh?"ASSET_REVIEW_PASS":"ASSET_REVIEW_FAIL");
-            File.WriteAllLines(Path.Combine(g.evidencePath,"asset-review-validation.txt"),report);Application.Quit(errors==0&&fresh?0:2);
+            report.Add(errors==0&&fresh&&motionPassed?"ASSET_REVIEW_PASS":"ASSET_REVIEW_FAIL");
+            File.WriteAllLines(Path.Combine(g.evidencePath,"asset-review-validation.txt"),report);Application.Quit(errors==0&&fresh&&motionPassed?0:2);
+        }
+        IEnumerator ReviewMotion(){
+            var rig=g.pilot.GetComponent<CharacterPresentation>();var knee=g.pilot.Find("Leg L/Knee");var ankle=g.pilot.Find("Leg L/Knee/Ankle");
+            Vector3 origin=g.pilot.position;g.mode=Mode.Cinematic;g.shot=2;float start=Time.time;float maxKnee=0,minAnkle=100,maxStep=0;Quaternion previous=knee.localRotation;
+            while(Time.time-start<2){
+                g.pilot.position=origin+Vector3.forward*((Time.time-start)*.8f);
+                Look(g.pilot.position+new Vector3(-2.8f,1.25f,3.4f),g.pilot.position+Vector3.up,40);
+                yield return new WaitForEndOfFrame();
+                maxKnee=Mathf.Max(maxKnee,Quaternion.Angle(Quaternion.identity,knee.localRotation));minAnkle=Mathf.Min(minAnkle,ankle.position.y-VisualEnvironment.SurfaceHeight(ankle.position));
+                maxStep=Mathf.Max(maxStep,Quaternion.Angle(previous,knee.localRotation));previous=knee.localRotation;
+            }
+            yield return Capture("13-walk-pose.png",.02f);
+            g.shot=3;yield return new WaitForSecondsRealtime(1.2f);float idle=rig.WalkBlend;
+            g.shot=5;yield return Capture("14-salute.png",1);float salute=rig.SaluteBlend;
+            g.shot=3;yield return new WaitForSecondsRealtime(1);float released=rig.SaluteBlend;
+            g.shot=7;yield return Capture("15-climb-pose.png",1);
+            motionPassed=maxKnee>25&&minAnkle>.08f&&idle<.08f&&salute>.95f&&released<.05f;
+            report.Add((motionPassed?"PASS":"FAIL")+": runtime walk/stop/salute/release/climb; knee bend "+maxKnee.ToString("F1")+" deg; ankle clearance "+minAnkle.ToString("F3")+" m; max sampled knee step "+maxStep.ToString("F1")+" deg; idle "+idle.ToString("F3")+"; salute "+salute.ToString("F3")+"; released "+released.ToString("F3"));
+            g.mode=Mode.Paused;g.pilot.position=origin;
         }
         void Look(Vector3 from,Vector3 at,float fov){g.cam.transform.position=from;g.cam.transform.LookAt(at);g.cam.fieldOfView=fov;}
         IEnumerator Capture(string name,float settle=.7f){yield return new WaitForSecondsRealtime(settle);yield return new WaitForEndOfFrame();string path=Path.Combine(folder,name);ScreenCapture.CaptureScreenshot(path);captures.Add(path);yield return new WaitForSecondsRealtime(.4f);}

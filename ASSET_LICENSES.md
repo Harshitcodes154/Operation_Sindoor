@@ -5,7 +5,7 @@ No ripped game, film, military-simulation, proprietary aircraft-package, or unve
 | Asset inventory | Project source | Origin / license treatment |
 |---|---|---|
 | Kestrel, Raven, cockpit, gear, stores and missiles | OriginalAircraft.cs, OriginalProps.cs; Assets/GeneratedVisuals | Original procedural geometry; no manufacturer or stock model; no added third-party art license. |
-| Pilots, officers, helmet, mask, uniform, modular joints | OriginalCharacters.cs | Original geometry; existing original cinematic animations. No scanned person or imported mocap. |
+| Pilots, officers, helmet, mask, uniform, modular joints, walking/salute/climb animation | OriginalCharacters.cs, CharacterPresentation.cs | Original geometry and procedural animation; existing cinematic direction retained. No scanned person or imported mocap. |
 | Hangars, trucks, tower, barracks, buildings, relay, trees and rocks | OriginalProps.cs, OriginalStructures.cs | Original procedural meshes and LODs. |
 | Terrain, roads, bridge, airbase infrastructure, radar array | VisualEnvironment.cs, WorldFactory.cs | Original fictional environment; not a surveyed real base. |
 | PBR base-color, normal, metallic/AO/smoothness maps | VisualMaterialAuthoring.cs; Assets/GeneratedVisuals/Materials | Original deterministic synthetic maps, not measured scans. |

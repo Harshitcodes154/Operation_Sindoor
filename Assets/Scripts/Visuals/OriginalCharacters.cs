@@ -10,8 +10,7 @@ namespace Sindoor {
             var skin=WorldFactory.Mat("Skin / warm medium",new Color(.38f,.235f,.155f),0);
             var webbing=WorldFactory.Mat("Harness nylon",new Color(.22f,.25f,.18f),0);
             // Anatomical volumes under the flight suit; seams and equipment carry close-range detail.
-            b[fabric].Ellipsoid(new Vector3(0,1.27f,0),new Vector3(.255f,.305f,.155f),32,22);
-            b[fabric].Ellipsoid(new Vector3(0,1.02f,0),new Vector3(.225f,.17f,.155f),28,16);
+            b[fabric].VerticalProfile(Vector3.zero,new[]{.91f,1.02f,1.13f,1.3f,1.43f,1.49f,1.53f},new[]{.16f,.213f,.195f,.229f,.235f,.185f,.079f},new[]{.115f,.14f,.13f,.157f,.142f,.115f,.077f},32);
             b[skin].Tube(new Vector3(0,1.49f,0),new Vector3(0,1.63f,0),.075f,.07f,20);
             b[skin].Ellipsoid(new Vector3(0,1.72f,.015f),new Vector3(.101f,.14f,.108f),32,24);
             if(officer){
@@ -50,16 +49,23 @@ namespace Sindoor {
             b.Attach(high,"Uniform and head");
             foreach(int s in new[]{-1,1}){
                 var leg=new GameObject(s<0?"Leg L":"Leg R").transform;leg.SetParent(root,false);leg.localPosition=new Vector3(s*.116f,.98f,0);var l=new VisualBatch();
-                l[fabric].Ellipsoid(new Vector3(0,-.205f,0),new Vector3(.11f,.26f,.115f),24,16);l[fabric].Ellipsoid(new Vector3(0,-.584f,.012f),new Vector3(.079f,.226f,.089f),24,16);
-                l[fabric].Ellipsoid(new Vector3(0,-.399f,.016f),new Vector3(.093f,.086f,.105f),24,14);
-                l[a.rubber].Ellipsoid(new Vector3(0,-.823f,.042f),new Vector3(.083f,.118f,.141f),24,16);l[a.rubber].Box(new Vector3(0,-.929f,.053f),new Vector3(.171f,.037f,.287f));
+                l[fabric].VerticalProfile(Vector3.zero,new[]{-.44f,-.36f,-.2f,-.04f,.04f},new[]{.075f,.079f,.095f,.105f,.08f},new[]{.082f,.09f,.105f,.114f,.085f});
                 l[fabric].Box(new Vector3(s*.077f,-.19f,.052f),new Vector3(.037f,.17f,.104f));
-                for(int i=0;i<5;i++)l[webbing].Tube(new Vector3(-.05f,-.78f-i*.022f,.122f),new Vector3(.05f,-.78f-i*.022f,.122f),.003f,.003f,8);
-                l.Attach(leg,"Articulated leg");
+                l.Attach(leg,"Thigh and cargo pocket");
+                var knee=new GameObject("Knee").transform;knee.SetParent(leg,false);knee.localPosition=new Vector3(0,-.42f,0);var shin=new VisualBatch();
+                shin[fabric].Ellipsoid(Vector3.zero,new Vector3(.077f,.074f,.085f),20,12);
+                shin[fabric].VerticalProfile(Vector3.zero,new[]{-.42f,-.33f,-.18f,-.05f,.02f},new[]{.058f,.062f,.08f,.073f,.069f},new[]{.061f,.07f,.085f,.081f,.073f});shin.Attach(knee,"Shin and knee");
+                var ankle=new GameObject("Ankle").transform;ankle.SetParent(knee,false);ankle.localPosition=new Vector3(0,-.42f,0);var boot=new VisualBatch();
+                boot[a.rubber].Ellipsoid(new Vector3(0,-.01f,.009f),new Vector3(.076f,.091f,.091f),24,14);
+                boot[a.rubber].Ellipsoid(new Vector3(0,-.068f,.069f),new Vector3(.078f,.054f,.153f),24,12);
+                boot[a.rubber].Box(new Vector3(0,-.116f,.065f),new Vector3(.156f,.024f,.287f));
+                for(int i=0;i<5;i++)boot[webbing].Tube(new Vector3(-.045f,.01f-i*.014f,.1f+i*.012f),new Vector3(.045f,.01f-i*.014f,.1f+i*.012f),.0025f,.0025f,8);
+                boot.Attach(ankle,"Articulated boot");
                 var arm=new GameObject(s<0?"Arm L":"Arm R").transform;arm.SetParent(root,false);arm.localPosition=new Vector3(s*.246f,1.448f,0);var upper=new VisualBatch();
-                upper[fabric].Ellipsoid(new Vector3(s*.037f,-.124f,0),new Vector3(.082f,.171f,.084f),24,16);upper.Attach(arm,"Upper sleeve");
+                upper[fabric].Ellipsoid(new Vector3(s*.021f,-.031f,0),new Vector3(.089f,.105f,.091f),24,14);
+                upper[fabric].VerticalProfile(new Vector3(s*.025f,0,0),new[]{-.29f,-.2f,-.07f,.015f},new[]{.057f,.068f,.08f,.061f},new[]{.061f,.075f,.088f,.066f});upper.Attach(arm,"Upper sleeve");
                 var forearm=new GameObject("Elbow").transform;forearm.SetParent(arm,false);forearm.localPosition=new Vector3(s*.035f,-.276f,0);forearm.localRotation=Quaternion.Euler(-9,0,0);var lower=new VisualBatch();
-                lower[fabric].Ellipsoid(new Vector3(0,-.105f,0),new Vector3(.064f,.135f,.07f),24,16);lower[a.rubber].Ellipsoid(new Vector3(0,-.247f,.016f),new Vector3(.052f,.081f,.034f),24,16);
+                lower[fabric].Ellipsoid(Vector3.zero,new Vector3(.06f,.065f,.066f),20,12);lower[fabric].VerticalProfile(Vector3.zero,new[]{-.23f,-.18f,-.08f,.025f},new[]{.044f,.052f,.062f,.052f},new[]{.047f,.056f,.067f,.055f});lower[a.rubber].Ellipsoid(new Vector3(0,-.247f,.016f),new Vector3(.052f,.081f,.034f),24,16);
                 for(int i=0;i<4;i++)lower[a.rubber].Tube(new Vector3(-.033f+i*.021f,-.27f,.032f),new Vector3(-.033f+i*.021f,-.324f,.026f),.009f,.007f,10);
                 lower[a.rubber].Tube(new Vector3(s*.04f,-.23f,.018f),new Vector3(s*.064f,-.275f,.048f),.014f,.012f,12);lower.Attach(forearm,"Glove and forearm");
                 // Small tricolour sleeve patch.

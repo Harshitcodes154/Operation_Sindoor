@@ -45,12 +45,12 @@ namespace Sindoor {
             for(int i=0;i<branches;i++){
                 float angle=i*2.39996f;Vector3 end=new Vector3(Mathf.Cos(angle)*(1.3f+i%3*.45f),5+i*.36f,Mathf.Sin(angle)*(1.3f+i%3*.45f));
                 if(level<2)b[bark].Tube(new Vector3(.15f,4+i*.31f,0),end,.07f,.022f,6);
-                b[a.foliage].Ellipsoid(end,new Vector3(1.65f,1.08f,1.48f),level==0?16:8,level==0?10:5,Quaternion.Euler(i*17,i*42,i*13));
+                b[a.foliage].RoughEllipsoid(end,new Vector3(1.65f,1.08f,1.48f),level==0?20:8,level==0?12:5,.85f);
             }
         }
         static void Rock(VisualBatch b,VisualAssetLibrary a,int level){
-            b[a.soil].Ellipsoid(new Vector3(0,.7f,0),new Vector3(2.3f,1.5f,1.7f),level==0?18:level==1?12:7,level==0?13:7,Quaternion.Euler(14,25,-16));
-            if(level<2)b[a.soil].Ellipsoid(new Vector3(1.2f,.3f,.7f),new Vector3(1.4f,.8f,1.2f),12,8,Quaternion.Euler(35,47,23));
+            b[a.soil].RoughEllipsoid(new Vector3(0,.7f,0),new Vector3(2.3f,1.5f,1.7f),level==0?22:level==1?12:7,level==0?16:7,1.1f);
+            if(level<2)b[a.soil].RoughEllipsoid(new Vector3(1.2f,.3f,.7f),new Vector3(1.4f,.8f,1.2f),12,8,.9f);
         }
         public static Transform Cockpit(Transform parent,VisualAssetLibrary a){
             var root=new GameObject("Detailed cockpit").transform;root.SetParent(parent,false);var b=new VisualBatch();

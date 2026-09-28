@@ -8,6 +8,7 @@ namespace Sindoor {
         readonly List<Vector3> vertices=new List<Vector3>();
         readonly List<Vector2> uv=new List<Vector2>();
         readonly List<int> triangles=new List<int>();
+        readonly List<Vector2Int> smoothSeams=new List<Vector2Int>();
         public void Triangle(Vector3 a,Vector3 b,Vector3 c,Vector2 ta,Vector2 tb,Vector2 tc){int n=vertices.Count;vertices.Add(a);vertices.Add(b);vertices.Add(c);uv.Add(ta);uv.Add(tb);uv.Add(tc);triangles.Add(n);triangles.Add(n+1);triangles.Add(n+2);}
         public void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector2 scale){Triangle(a,b,c,Vector2.zero,new Vector2(scale.x,0),scale);Triangle(a,c,d,Vector2.zero,scale,new Vector2(0,scale.y));}
         public void Box(Vector3 p,Vector3 size,Quaternion rot){
@@ -23,21 +24,42 @@ namespace Sindoor {
                 vertices.Add(centre+rotation*Vector3.Scale(new Vector3(Mathf.Sin(b)*Mathf.Cos(a),Mathf.Cos(b),Mathf.Sin(b)*Mathf.Sin(a)),scale));uv.Add(new Vector2(u,v));
             }
             for(int y=0;y<rings;y++)for(int x=0;x<segments;x++){int a=start+y*(segments+1)+x,b=a+segments+1;triangles.AddRange(new[]{a,a+1,b,a+1,b+1,b});}
+            for(int y=1;y<rings;y++)smoothSeams.Add(new Vector2Int(start+y*(segments+1),start+y*(segments+1)+segments));
         }
         public void Tube(Vector3 from,Vector3 to,float r0,float r1,int segments=20,bool cap=true){
             var rotation=Quaternion.FromToRotation(Vector3.forward,(to-from).normalized);int start=vertices.Count;
             for(int z=0;z<=1;z++)for(int i=0;i<=segments;i++){float a=i*Mathf.PI*2/segments;vertices.Add((z==0?from:to)+rotation*new Vector3(Mathf.Cos(a)*(z==0?r0:r1),Mathf.Sin(a)*(z==0?r0:r1),0));uv.Add(new Vector2(i/(float)segments,z*(to-from).magnitude));}
             for(int i=0;i<segments;i++){int a=start+i,b=a+segments+1;triangles.AddRange(new[]{a,a+1,b,a+1,b+1,b});}
+            for(int z=0;z<=1;z++)smoothSeams.Add(new Vector2Int(start+z*(segments+1),start+z*(segments+1)+segments));
             if(cap)for(int i=0;i<segments;i++){float a=i*Mathf.PI*2/segments,b=(i+1)*Mathf.PI*2/segments;Vector3 p=rotation*new Vector3(Mathf.Cos(a),Mathf.Sin(a),0),q=rotation*new Vector3(Mathf.Cos(b),Mathf.Sin(b),0);Triangle(from,from+q*r0,from+p*r0,Vector2.zero,Vector2.right,Vector2.up);Triangle(to,to+p*r1,to+q*r1,Vector2.zero,Vector2.right,Vector2.up);}
+        }
+        public void RoughEllipsoid(Vector3 centre,Vector3 scale,int segments,int rings,float amount){
+            int start=vertices.Count;Ellipsoid(centre,scale,segments,rings);
+            for(int i=start;i<vertices.Count;i++){
+                var d=vertices[i]-centre;var p=new Vector3(d.x/scale.x,d.y/scale.y,d.z/scale.z);
+                float noise=Mathf.PerlinNoise(p.x*2.7f+17,p.z*2.7f+31)*.65f+Mathf.PerlinNoise(p.y*4.1f+8,p.x*4.1f+12)*.35f;
+                vertices[i]=centre+d*(1+(noise-.5f)*amount);
+            }
         }
         public void Loft(float[] z,float[] width,float[] height,float[] offset,int radial,int subdivisions=3){
             int start=vertices.Count,rows=(z.Length-1)*subdivisions+1;
             for(int row=0;row<rows;row++){
                 float index=row/(float)subdivisions;int a=Mathf.Min((int)index,z.Length-2),b=a+1;float t=index-a;
-                float zz=Mathf.Lerp(z[a],z[b],t),w=Mathf.SmoothStep(width[a],width[b],t),h=Mathf.SmoothStep(height[a],height[b],t),cy=Mathf.Lerp(offset[a],offset[b],t);
+                float zz=Mathf.Lerp(z[a],z[b],t),w=Profile(z,width,a,t),h=Profile(z,height,a,t),cy=Profile(z,offset,a,t);
                 for(int r=0;r<=radial;r++){float angle=r*Mathf.PI*2/radial;vertices.Add(new Vector3(Mathf.Cos(angle)*w,cy+Mathf.Sin(angle)*h,zz));uv.Add(new Vector2(r/(float)radial*3,(zz-z[0])/(z[z.Length-1]-z[0])*5));}
             }
             for(int s=0;s<rows-1;s++)for(int r=0;r<radial;r++){int a=start+s*(radial+1)+r,b=a+radial+1;triangles.AddRange(new[]{a,a+1,b,a+1,b+1,b});}
+            for(int s=0;s<rows;s++)smoothSeams.Add(new Vector2Int(start+s*(radial+1),start+s*(radial+1)+radial));
+        }
+        // Shape-preserving Hermite interpolation retains a continuous slope between body sections.
+        static float Profile(float[] positions,float[] values,int i,float t){
+            float Slope(int k){if(k==0)return (values[1]-values[0])/(positions[1]-positions[0]);if(k==values.Length-1)return (values[k]-values[k-1])/(positions[k]-positions[k-1]);float a=(values[k]-values[k-1])/(positions[k]-positions[k-1]),b=(values[k+1]-values[k])/(positions[k+1]-positions[k]);return a*b<=0?0:2*a*b/(a+b);}
+            float d=positions[i+1]-positions[i],tt=t*t,ttt=tt*t;
+            return (2*ttt-3*tt+1)*values[i]+(ttt-2*tt+t)*d*Slope(i)+(-2*ttt+3*tt)*values[i+1]+(ttt-tt)*d*Slope(i+1);
+        }
+        public void VerticalProfile(Vector3 centre,float[] y,float[] width,float[] depth,int radial=24){
+            int start=vertices.Count;Loft(y,width,depth,new float[y.Length],radial,3);
+            for(int i=start;i<vertices.Count;i++){var p=vertices[i];vertices[i]=centre+new Vector3(p.x,p.z,-p.y);}
         }
         public void Airfoil(Vector3 rootLeading,Vector3 rootTrailing,Vector3 tipLeading,Vector3 tipTrailing,float thickness,int spanSteps=10,int chordSteps=16){
             int start=vertices.Count;int sheet=(spanSteps+1)*(chordSteps+1);
@@ -53,7 +75,7 @@ namespace Sindoor {
                 if((side==0)!=reverse)triangles.AddRange(new[]{a,b,a+1,a+1,b,b+1});else triangles.AddRange(new[]{a,a+1,b,a+1,b+1,b});
             }
         }
-        public Mesh ToMesh(string name){var m=new Mesh{name=name,indexFormat=vertices.Count>65535?IndexFormat.UInt32:IndexFormat.UInt16};m.SetVertices(vertices);m.SetUVs(0,uv);m.SetTriangles(triangles,0);m.RecalculateNormals();m.RecalculateTangents();m.RecalculateBounds();return m;}
+        public Mesh ToMesh(string name){var m=new Mesh{name=name,indexFormat=vertices.Count>65535?IndexFormat.UInt32:IndexFormat.UInt16};m.SetVertices(vertices);m.SetUVs(0,uv);m.SetTriangles(triangles,0);m.RecalculateNormals();var normals=m.normals;foreach(var seam in smoothSeams){var n=(normals[seam.x]+normals[seam.y]).normalized;normals[seam.x]=normals[seam.y]=n;}m.normals=normals;m.RecalculateTangents();m.RecalculateBounds();return m;}
         public Renderer Attach(Transform parent,string name,Material material){var g=new GameObject(name);g.transform.SetParent(parent,false);g.AddComponent<MeshFilter>().sharedMesh=ToMesh(name);var r=g.AddComponent<MeshRenderer>();r.sharedMaterial=material;return r;}
     }
     public sealed class VisualBatch {

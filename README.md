@@ -1,11 +1,64 @@
+<<<<<<< HEAD
 # ✈️ OPERATION SINDOOR
 
 ### A Fictional Single-Player Aviation Campaign Built with Unity
+=======
+<p align="center">
+  <img src="Documentation/Media/mission-banner.svg" alt="Operation Sindoor — a fictional single-player aviation campaign. Five missions, one journey home." width="100%">
+</p>
+
+<h1 align="center">Operation Sindoor</h1>
+
+<p align="center">
+  <strong>Take flight. Follow the story. Find your way home.</strong><br>
+  A fictional aviation campaign with cinematic briefings, aerial combat, and a connected five-mission journey.
+</p>
+
+<p align="center">
+  <strong>Windows</strong> &nbsp; / &nbsp; Single-player &nbsp; / &nbsp; Unity 6 &nbsp; / &nbsp; C# &nbsp; / &nbsp; Universal Render Pipeline
+</p>
+
+<p align="center">
+  <a href="#play">Play</a> &nbsp; · &nbsp;
+  <a href="#campaign">Campaign</a> &nbsp; · &nbsp;
+  <a href="#controls">Controls</a> &nbsp; · &nbsp;
+  <a href="#build-and-validate">Build &amp; validate</a> &nbsp; · &nbsp;
+  <a href="#documentation">Documentation</a>
+</p>
+
+---
+
+## The experience
+
+Fly from the first engine start to the final landing through five linked missions. Story sequences lead into flight, while cockpit and chase cameras offer two perspectives on an original procedural world.
+
+| In the air | On the ground | Across the campaign |
+| :--- | :--- | :--- |
+| Aerial interception, guided missiles, cannon, and countermeasures | Directed briefings, preparation, and homecoming sequences | Five connected missions with changing objectives and weather |
+| Cockpit instruments, radar, and selectable targets | Original aircraft, characters, and modular airbase scenery | Persistent unlocks, scores, settings, and input bindings |
+| Optional route and landing assistance | PBR materials, terrain LODs, particle effects, and synthesized audio | Session checkpoints for recovering major objectives |
+
+### Flight gallery
+
+<table>
+  <tr>
+    <td width="50%"><img src="Documentation/Media/cockpit.png" alt="In-game cockpit view on the runway with flight instruments and the engine-start prompt." width="100%"></td>
+    <td width="50%"><img src="Documentation/Media/valley-transit.png" alt="In-game chase view during the third mission's low-altitude valley transit." width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Pre-flight</strong><br>Cockpit view and flight instruments</td>
+    <td align="center"><strong>Through the valley</strong><br>Chase view during mission three</td>
+  </tr>
+</table>
+
+<sub>In-game captures from local automated playtests. The animated header is decorative. The project uses stylized procedural art; see the production notes below for its current scope.</sub>
+>>>>>>> c887415 (Updating README)
 
 <p align="center">
   <strong>Fly. Defend. Survive. Return Home.</strong>
 </p>
 
+<<<<<<< HEAD
 <p align="center">
   <img src="https://img.shields.io/badge/Engine-Unity%206-000000?style=for-the-badge&logo=unity" alt="Unity 6"/>
   <img src="https://img.shields.io/badge/Language-C%23-239120?style=for-the-badge&logo=csharp" alt="C#"/>
@@ -24,9 +77,26 @@
 ## 🎮 Overview
 
 **Operation Sindoor** is a fictional single-player aviation campaign created in Unity for Windows.
+=======
+**Have a Windows build?** Run `Builds/Windows/OperationSindoor.exe`. Keep the executable alongside `UnityPlayer.dll`, `MonoBleedingEdge`, and `OperationSindoor_Data`. Unity is not required to play.
+
+**Have the portable ZIP?** Extract all of `Builds/OperationSindoor-Windows.zip`, then launch `OperationSindoor/OperationSindoor.exe` inside the extracted folder. The archive includes documentation and validation reports.
+
+**Starting from source?** Build the player using the [developer workflow](#build-and-validate). `Builds/` and `Artifacts/` are local outputs excluded from Git.
+
+### Your first flight
+
+1. Choose **PLAY** and press <kbd>Enter</kbd> to advance cinematic shots.
+2. In the cockpit, press <kbd>Enter</kbd> to start the engine.
+3. Hold <kbd>W</kbd> to raise the throttle, then use <kbd>↓</kbd> to raise the nose.
+4. Follow the mission prompts. Press <kbd>H</kbd> to toggle route assistance, including landing.
+
+> **Assistance stays optional.** Manual pitch, yaw, or roll disengages it. In combat, assistance turns toward the selected target; you still control weapons and countermeasures.
+>>>>>>> c887415 (Updating README)
 
 The project combines:
 
+<<<<<<< HEAD
 * ✈️ Aircraft flight simulation
 * 🎯 Target identification and combat
 * 📡 Radar and target-lock mechanics
@@ -43,9 +113,50 @@ The project combines:
 * 🧪 Automated build and gameplay validation
 
 The campaign consists of **five connected missions**, with each mission progressing the story and introducing different flight and combat objectives.
+=======
+| Mission | Name | Flight brief |
+| :---: | :--- | :--- |
+| **01** | **Scramble** | Start up, take off, identify a training contact, engage, return, and land. |
+| **02** | **Air Defence** | Protect the formation against an interception. |
+| **03** | **Operation Sindoor** | Navigate a valley, engage two fictional military relays, and withdraw through defensive combat. |
+| **04** | **The Long Return** | Face an airborne interception in storm conditions with limited missiles. |
+| **05** | **Homecoming** | Approach, land, shut down, and close the story with a reunion and tribute. |
+
+<details>
+<summary><strong>Progress, checkpoints, and save location</strong></summary>
+
+Restore the last major objective checkpoint from the pause or failure menu. In-flight checkpoints are **session-local**; campaign unlocks, scores, settings, and bindings persist between sessions.
+
+Save location on Windows:
+
+```text
+%USERPROFILE%/AppData/LocalLow/Sentinel Studio/Operation Sindoor/campaign.json
+```
+
+A backup provides recovery if the primary save is damaged.
+
+</details>
+
+## Controls
+
+| Flight | Input | Combat & systems | Input |
+| :--- | :--- | :--- | :--- |
+| Throttle up / down | <kbd>W</kbd> / <kbd>S</kbd> | Select / identify target | <kbd>F</kbd> |
+| Nose down / up | <kbd>↑</kbd> / <kbd>↓</kbd> | Guided missile, after lock | <kbd>R</kbd> |
+| Roll | <kbd>A</kbd> / <kbd>D</kbd> | Cannon | <kbd>Space</kbd> |
+| Yaw | <kbd>Q</kbd> / <kbd>E</kbd> | Chaff / flare | <kbd>X</kbd> |
+| Mouse steering | Hold right mouse + move | Cockpit / chase view | <kbd>C</kbd> |
+| Afterburner | <kbd>Left Shift</kbd> | Radar | <kbd>Tab</kbd> |
+| Route assistance | <kbd>H</kbd> | Pause | <kbd>Esc</kbd> |
+
+<kbd>Enter</kbd> starts or shuts down the engine and advances cinematics, depending on context.
+
+Primary action keys can be rebound in **Controls**. Controller flight is supported, with mappings shown in that menu; menus use a mouse.
+>>>>>>> c887415 (Updating README)
 
 The project is designed around a reusable gameplay architecture rather than a collection of isolated scenes.
 
+<<<<<<< HEAD
 ---
 
 ## ⚠️ Important Notice
@@ -64,9 +175,90 @@ The project does not represent:
 * Real personnel identities
 * Real weapon parameters
 * Real-world casualty information
+=======
+### Requirements
+
+| Component | Project version |
+| :--- | :--- |
+| Unity Editor | **6000.6.0f1** with Windows Build Support |
+| Universal Render Pipeline | **17.6.0** |
+| Input System | **1.19.0** |
+| Windows player backend | **Mono** — no C++ toolchain required |
+
+The project uses a **Unity 6 Update release**, not an LTS editor. Older editors require package migration.
+
+Open the project in the matching editor and choose **Operation Sindoor → Setup and build**. This generates content and all scene gateways, validates the project, and builds the Windows player. No manual GameObject, material, prefab, or scene assembly is required.
+
+### PowerShell workflow
+
+Run these commands from the repository root, with the project closed in the Unity Editor before the batch build:
+
+```powershell
+# Generate content, validate, and build the Windows player.
+.\Tools\Build.ps1
+
+# Exercise all five missions with an accelerated automated pilot.
+.\Tools\Playtest.ps1
+
+# Capture assets and sample normal-speed transit frames.
+.\Tools\ReviewAssets.ps1
+
+# Compare protected gameplay against the local pre-upgrade baseline.
+.\Tools\CheckGameplayPreservation.ps1
+
+# Create the portable Windows ZIP and its SHA-256 checksum.
+.\Tools\Package.ps1
+```
+
+`Build.ps1` defaults to the standard Unity Hub installation path. Supply `-Unity 'C:\path\to\Unity.exe'` if the editor is installed elsewhere. The preservation check requires the local baseline at `Artifacts/AssetUpgradeBaseline`; a fresh clone does not include it.
+
+<details>
+<summary><strong>Validation behavior and release requirements</strong></summary>
+
+- **Campaign playtest:** runs a hidden Windows player through normal flight, combat, and objective logic, using an isolated in-memory save. Add `-ShowWindow` for a visible run with screenshots. Hidden runs skip screenshot capture because rendering is unreliable in that mode.
+- **Asset review:** captures assets in a visible player and records normal-speed transit frame samples.
+- **Gameplay preservation:** compares protected gameplay against the local pre-upgrade baseline.
+- **Packaging:** requires a successful build and fresh passing campaign, asset-review, and preservation reports. The ZIP includes runtime files, notices, documentation, and validation reports; development backup folders and debug symbols are excluded.
+
+Results are written to `Artifacts/`. Automated runs do not replace human playtesting or representative hardware profiling. Transit frame samples are not a sustained combat-performance benchmark.
+
+</details>
+
+## Project structure
+
+```text
+Assets/
+  Editor/             Content generation and Windows build tooling
+  Scenes/             Twelve editor scene gateways
+  Scripts/            Campaign, flight, combat, UI, and cinematics
+    Visuals/          Original asset authoring and presentation
+  GeneratedVisuals/   Procedural meshes, materials, and prefabs
+Documentation/       Architecture, reports, media, and third-party notices
+Tools/               Build, playtest, asset review, and packaging scripts
+Packages/            Unity package manifest and lock file
+ProjectSettings/     Unity project configuration
+```
+
+## Documentation
+
+| Reference | What you will find |
+| :--- | :--- |
+| [Development report](Documentation/DEVELOPMENT_REPORT.md) | Delivered systems, validation evidence, and remaining production work |
+| [Development notes](DEVELOPMENT_NOTES.md) | Design decisions, engineering structure, and practical limits |
+| [Visual asset architecture](Documentation/VISUAL_ASSET_ARCHITECTURE.md) | Model contracts, prefab families, rendering, and art limitations |
+| [Asset licenses](ASSET_LICENSES.md) | Content inventory and licensing information |
+| [Attributions](ATTRIBUTIONS.md) | Project credits and third-party notices |
+
+### Current production scope
+
+This is an integrated, playable procedural project with original geometric aircraft, characters, and environments. Fourteen modular prefab families support the world, alongside cockpit detail, PBR maps, terrain LODs, particle effects, and layered synthesized audio. Dialogue is subtitled.
+
+The art remains stylized and procedural. Photorealistic AAA visuals, representative performance targets, and final production polish require further art work, human playtesting, and hardware profiling. Existing gameplay, mission definitions, controls, saves, camera paths, title screen, and HUD are preserved by the asset upgrade.
+>>>>>>> c887415 (Updating README)
 
 ---
 
+<<<<<<< HEAD
 # 🚀 Features
 
 ## ✈️ Flight System
@@ -851,3 +1043,12 @@ Please review the repository's license and asset documentation before redistribu
 **Fly the mission. Complete the objective. Make it home.**
 
 </p>
+=======
+> This game is a fictionalized interpretation inspired by publicly reported events. Characters, locations, missions, dialogue, and gameplay scenarios have been fictionalized for entertainment.
+
+No real operational routes, coordinates, targets, weapon parameters, personnel identities, or casualty names are represented.
+
+---
+
+<p align="center"><sub>Operation Sindoor · A fictional aviation campaign · Built with Unity</sub></p>
+>>>>>>> c887415 (Updating README)

@@ -16,7 +16,7 @@ namespace Sindoor.Editor {
             a.enemyPaint=VisualMaterialAuthoring.Make("Raven disruptive paint",new Color(.31f,.325f,.28f),1,.23f,.34f,1024);
             a.alloy=VisualMaterialAuthoring.Make("Brushed titanium",new Color(.42f,.44f,.45f),0,.88f,.6f);
             a.rubber=VisualMaterialAuthoring.Make("Rubber and carbon",new Color(.028f,.033f,.038f),3,.04f,.22f,256);
-            a.fabric=VisualMaterialAuthoring.Make("Flight suit twill",new Color(.225f,.267f,.185f),5,0,.21f);
+            a.fabric=VisualMaterialAuthoring.Make("Flight suit twill",new Color(.32f,.365f,.265f),5,0,.21f);
             a.concrete=VisualMaterialAuthoring.Make("Weathered apron concrete",new Color(.39f,.395f,.365f),2,.02f,.18f,1024);
             a.asphalt=VisualMaterialAuthoring.Make("Runway aggregate",new Color(.19f,.2f,.21f),3,.02f,.16f,1024);
             a.cladding=VisualMaterialAuthoring.Make("Corrugated hangar steel",new Color(.3f,.33f,.32f),4,.45f,.37f);
@@ -55,7 +55,7 @@ namespace Sindoor.Editor {
                 float u=(x-n/2f)/(n/2f),v=(y-n/2f)/(n/2f),r=Mathf.Sqrt(u*u+v*v),noise=Mathf.PerlinNoise(u*5+20,v*5+30)*.6f+Mathf.PerlinNoise(u*13+50,v*13+70)*.4f;
                 float alpha=Mathf.Pow(Mathf.Clamp01(1-r),1.1f)*(.3f+noise*.7f);pixels[y*n+x]=new Color(.7f+noise*.3f,.7f+noise*.3f,.7f+noise*.3f,alpha);
             }
-            t.SetPixels(pixels);t.Apply();string path=Folder+"/Materials/SmokeDensity.png";File.WriteAllBytes(path,t.EncodeToPNG());UnityEngine.Object.DestroyImmediate(t);AssetDatabase.ImportAsset(path);var importer=(TextureImporter)AssetImporter.GetAtPath(path);importer.alphaIsTransparency=true;importer.mipmapEnabled=true;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            t.SetPixels(pixels);t.Apply();string path=Folder+"/Materials/SmokeDensity.png";VisualMaterialAuthoring.WritePngIfChanged(path,t.EncodeToPNG());UnityEngine.Object.DestroyImmediate(t);AssetDatabase.ImportAsset(path);var importer=(TextureImporter)AssetImporter.GetAtPath(path);importer.alphaIsTransparency=true;importer.mipmapEnabled=true;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
         public static void Validate(VisualAssetLibrary a){
             Directory.CreateDirectory("Artifacts");var lines=new List<string>();
@@ -70,7 +70,28 @@ namespace Sindoor.Editor {
             var attachmentPositions=new Dictionary<string,Vector3>{{"CockpitCamera",new Vector3(0,1.5f,4.5f)},{"CannonMuzzle",new Vector3(0,-.5f,9)},{"MissileLaunch",new Vector3(0,-1,8)},{"ExhaustL",new Vector3(-.69f,-.1f,-8.2f)},{"ExhaustR",new Vector3(.69f,-.1f,-8.2f)}};
             foreach(var prefab in new[]{a.kestrel,a.adversary})foreach(var item in attachmentPositions)if(Vector3.Distance(prefab.transform.Find("Attachments/"+item.Key).localPosition,item.Value)>.001f)throw new Exception("Misaligned attachment: "+item.Key);
             foreach(var prefab in new[]{a.pilot,a.officer})foreach(var bone in new[]{"Leg L","Leg R","Arm L","Arm R"})if(!prefab.transform.Find(bone))throw new Exception("Incompatible cinematic rig: "+bone);
+            foreach(var prefab in new[]{a.pilot,a.officer})foreach(var bone in new[]{"Leg L/Knee/Ankle","Leg R/Knee/Ankle","Arm L/Elbow","Arm R/Elbow"})if(!prefab.transform.Find(bone))throw new Exception("Missing articulated visual joint: "+bone);
+            foreach(var prefab in new[]{a.kestrel,a.adversary})foreach(var part in new[]{"Nose strut","Main strut L","Main strut R"})if(!prefab.transform.Find("Visual Model/Landing gear/"+part+"/Wheel"))throw new Exception("Missing articulated landing gear: "+part);
+            ValidateMotion(lines);
             lines.Add("PASS: catalog, references, materials, decreasing LOD counts, aligned aircraft attachments, separate collision model and cinematic rig compatibility.");File.WriteAllLines("Artifacts/visual-asset-validation.txt",lines);
+        }
+        static void ValidateMotion(List<string> lines){
+            float worstError=0;
+            for(int i=0;i<=200;i++){
+                var foot=CharacterPresentation.FootCycle(i/200f);var angles=CharacterPresentation.SolveLeg(foot.x,.16f+foot.y);
+                var hip=Quaternion.Euler(angles.x,0,0);var knee=Quaternion.Euler(angles.y,0,0);
+                var actual=Vector3.up*.98f+hip*(Vector3.down*.42f)+hip*knee*(Vector3.down*.42f);
+                worstError=Mathf.Max(worstError,Vector3.Distance(actual,new Vector3(0,.16f+foot.y,foot.x)));
+                if(foot.y<-.0001f||angles.y<0||angles.y>130)throw new Exception("Invalid procedural walking pose");
+            }
+            if(worstError>.003f)throw new Exception("Foot placement error: "+worstError);
+            float low=0,high=0;for(int i=0;i<30;i++)low=CharacterPresentation.Damp(low,1,6,1f/30);for(int i=0;i<144;i++)high=CharacterPresentation.Damp(high,1,6,1f/144);
+            if(Mathf.Abs(low-high)>.0001f)throw new Exception("Animation blend depends on frame rate");
+            if(Vector2.Distance(CharacterPresentation.FootCycle(.99999f),CharacterPresentation.FootCycle(0))>.001f)throw new Exception("Discontinuous walk cycle");
+            CharacterPresentation.SalutePose(out var shoulder,out var forearm);
+            var saluteHand=new Vector3(.246f,1.448f,0)+shoulder*new Vector3(.035f,-.276f,0)+shoulder*forearm*new Vector3(0,-.305f,.028f);
+            if(Vector3.Distance(saluteHand,new Vector3(.105f,1.8f,.115f))>.001f)throw new Exception("Salute hand misses helmet");
+            lines.Add("PASS: 201 foot placement samples (maximum error "+worstError.ToString("F5")+" m), continuous gait wrap, 30/144 Hz blend equivalence, knee/ankle/elbow and gear rig references.");
         }
     }
 }

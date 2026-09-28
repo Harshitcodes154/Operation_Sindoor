@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title description">
+  <title id="title">Operation Sindoor</title>
+  <desc id="description">A fictional aviation campaign. Five missions, one journey home. A slow radar sweep and a moving route accent frame the title.</desc>
+  <defs>
+    <linearGradient id="background" x2="1" y2="1">
+      <stop stop-color="#0b1522"/>
+      <stop offset="1" stop-color="#122a32"/>
+    </linearGradient>
+    <radialGradient id="radar-glow">
+      <stop stop-color="#6ad9bb" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#6ad9bb" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent">
+      <stop stop-color="#e7b76c"/>
+      <stop offset="1" stop-color="#75dec6"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#a7d9d2" stroke-opacity=".045"/>
+    </pattern>
+  </defs>
+  <style>
+    .sweep { transform-origin: 964px 177px; animation: scan 16s linear infinite; }
+    .route { animation: travel 12s linear infinite; }
+    .contact { animation: breathe 5s ease-in-out infinite; }
+    @keyframes scan { to { transform: rotate(360deg); } }
+    @keyframes travel { to { stroke-dashoffset: -100; } }
+    @keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .sweep, .route, .contact { animation: none; }
+    }
+  </style>
+  <rect width="1200" height="360" rx="16" fill="url(#background)"/>
+  <rect width="1200" height="360" rx="16" fill="url(#grid)"/>
+  <rect x="1" y="1" width="1198" height="358" rx="15" fill="none" stroke="#29414c"/>
+  <path d="M48 42H104" stroke="url(#accent)" stroke-width="3"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="120" y="47" fill="#a9c5cb" font-size="13" letter-spacing="3">FICTIONAL AVIATION CAMPAIGN</text>
+    <text x="48" y="124" fill="#c7d5dd" font-size="29" letter-spacing="9">OPERATION</text>
+    <text x="44" y="205" fill="#f3f4ee" font-size="82" font-weight="700" letter-spacing="5">SINDOOR</text>
+    <text x="48" y="245" fill="#c1cfd5" font-size="20">Five missions. One journey home.</text>
+    <g font-size="12" letter-spacing="2" fill="#9eb8c2">
+      <text x="48" y="316">STORY-DRIVEN</text>
+      <text x="240" y="316">SINGLE-PLAYER</text>
+      <text x="448" y="316">WINDOWS</text>
+    </g>
+  </g>
+  <g fill="#e7b76c">
+    <circle cx="210" cy="312" r="2"/>
+    <circle cx="418" cy="312" r="2"/>
+  </g>
+  <path d="M650 308H697L732 273H794" fill="none" stroke="#416575"/>
+  <path class="route" d="M650 308H697L732 273H794" fill="none" stroke="#80cebb" stroke-width="2" stroke-dasharray="10 90"/>
+  <circle cx="964" cy="177" r="158" fill="url(#radar-glow)"/>
+  <g fill="none" stroke="#8bc4be" stroke-opacity=".23">
+    <circle cx="964" cy="177" r="128"/>
+    <circle cx="964" cy="177" r="85"/>
+    <circle cx="964" cy="177" r="42"/>
+    <path d="M820 177H1108M964 33V321"/>
+    <path d="M873.5 86.5L1054.5 267.5M873.5 267.5L1054.5 86.5" stroke-dasharray="3 8"/>
+  </g>
+  <g class="sweep">
+    <path d="M964 177L964 49A128 128 0 0 1 1074.85 113Z" fill="#77dbc3" opacity=".07"/>
+    <path d="M964 177L1074.85 113" stroke="#88e2ca" stroke-opacity=".6" stroke-width="1.5"/>
+  </g>
+  <g stroke="#91dcca" fill="#112b32">
+    <path d="M964 145L971 171L994 188V194L970 185L969 205L980 213V217L964 212L948 217V213L959 205L958 185L934 194V188L957 171Z" stroke-width="1.5"/>
+    <circle class="contact" cx="1013" cy="109" r="4" fill="#91dcca" stroke="none"/>
+    <circle class="contact" cx="897" cy="225" r="3" fill="#e7b76c" stroke="none"/>
+  </g>
+  <g fill="#a9c5cb" font-family="Segoe UI, Arial, sans-serif" font-size="11" letter-spacing="2">
+    <text x="957" y="25">N</text>
+    <text x="878" y="342">CAMPAIGN / 01 — 05</text>
+  </g>
+  <path d="M48 274H580" stroke="#2a424e"/>
+</svg>
